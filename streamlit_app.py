@@ -36,8 +36,8 @@ else:
     st.title("Predicción de Enfermedad")
 
     # Cargar el modelo previamente entrenado
-    model = load_model("keras_Model.h5", compile=False)
-
+model_path = os.path.join(os.getcwd(), "keras_model.h5")
+model = load_model(model_path, compile=False)
     # Cargar las etiquetas
     class_names = open("labels.txt", "r").readlines()
 
