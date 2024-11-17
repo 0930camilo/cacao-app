@@ -23,6 +23,7 @@ def login():
             st.sidebar.success("Inicio de sesión exitoso")
         else:
             st.sidebar.error("Usuario o contraseña incorrectos")
+
 # Inicializar el estado de sesión
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
@@ -37,10 +38,20 @@ else:
 
     # Cargar el modelo previamente entrenado
     model_path = os.path.join(os.getcwd(), "keras_model.h5")
-    model = load_model(model_path, compile=False)
+    try:
+        model = load_model(model_path, compile=False)
+    except Exception as e:
+        st.sidebar.error(f"Error al cargar el modelo: {e}")
+        st.stop()  # Detener ejecución si el modelo no se carga
 
     # Cargar las etiquetas
-    class_names = open("labels.txt", "r").readlines()
+    class_names = []
+    if os.path.exists("labels.txt"):
+        with open("labels.txt", "r") as f:
+            class_names = f.readlines()
+    else:
+        st.sidebar.error("El archivo 'labels.txt' no se encuentra.")
+        st.stop()  # Detener ejecución si las etiquetas no se encuentran
 
     # Diccionario de recomendaciones basadas en las enfermedades
     recommendations = {
@@ -67,17 +78,17 @@ else:
     if uploaded_image is not None:
         # Procesar y redimensionar la imagen cargada para que sea más pequeña
         image = Image.open(uploaded_image).convert("RGB")
-        image = image.resize((300, 300))  # Redimensionar a 300x300 píxeles
 
-        # Mostrar la imagen cargada (ahora más pequeña)
-        st.image(image, caption="Imagen cargada", use_container_width=False)
+        # Redimensionar la imagen para mostrarla (300x300 para vista previa)
+        image_resized = image.resize((300, 300))  # Para mostrar
+        st.image(image_resized, caption="Imagen cargada", use_container_width=False)
 
         # Redimensionar la imagen para el modelo
         size = (224, 224)
-        image = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
+        image_for_model = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
 
         # Convertir la imagen a un arreglo numpy
-        image_array = np.asarray(image)
+        image_array = np.asarray(image_for_model)
 
         # Normalizar la imagen
         normalized_image_array = (image_array.astype(np.float32) / 127.5) - 1
