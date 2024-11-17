@@ -2,6 +2,7 @@ import streamlit as st
 from tensorflow.keras.models import load_model
 from PIL import Image, ImageOps
 import numpy as np
+import os  # Importación de la biblioteca os
 
 # Diccionario de credenciales de usuario
 USER_CREDENTIALS = {
