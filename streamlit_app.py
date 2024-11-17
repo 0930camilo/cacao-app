@@ -22,7 +22,6 @@ def login():
             st.sidebar.success("Inicio de sesión exitoso")
         else:
             st.sidebar.error("Usuario o contraseña incorrectos")
-
 # Inicializar el estado de sesión
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
@@ -36,8 +35,9 @@ else:
     st.title("Predicción de Enfermedad")
 
     # Cargar el modelo previamente entrenado
-model_path = os.path.join(os.getcwd(), "keras_model.h5")
-model = load_model(model_path, compile=False)
+    model_path = os.path.join(os.getcwd(), "keras_model.h5")
+    model = load_model(model_path, compile=False)
+
     # Cargar las etiquetas
     class_names = open("labels.txt", "r").readlines()
 
